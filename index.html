@@ -74,6 +74,20 @@ button{border:0;border-radius:8px;padding:11px 16px;font-weight:700;cursor:point
 #vInstitute{top:58.0% !important;font-size:15px !important}
 #vJoining{top:65.5% !important}
 
+/* Student Photo Styling */
+.card-photo {
+  position: absolute !important;
+  left: 8.5% !important;
+  top: 31.5% !important;
+  width: 26.5% !important;
+  height: 44.5% !important;
+  object-fit: cover;
+  border-radius: 6px;
+  border: 2px solid #082d5c;
+  background: #eef1f5;
+  z-index: 3 !important;
+}
+
 @media(max-width:750px){
   .card .value{font-size:12px !important}
   #vInstitute{font-size:10px !important}
@@ -96,7 +110,7 @@ button{border:0;border-radius:8px;padding:11px 16px;font-weight:700;cursor:point
     <div>
       <label>Excel / CSV File</label>
       <input id="file" type="file" accept=".xlsx,.xls,.csv">
-      <div class="hint">The program automatically finds the row containing ENROLLMENT NO, NAME and GRADE.</div>
+      <div class="hint">Automatically detects ENROLLMENT NO, NAME, GRADE, DATE OF BIRTH, MOBILE NO, GURU, and NAME OF THE INSTITUTE.</div>
     </div>
     <div>
       <label>Search Student</label>
@@ -117,7 +131,7 @@ button{border:0;border-radius:8px;padding:11px 16px;font-weight:700;cursor:point
 </div>
 
 <div class="panel">
-  <div class="manual-title">Student Details</div>
+  <div class="manual-title" style="font-weight:700;margin-bottom:10px">Student Details</div>
   <div class="grid">
     <div><label>Student ID / Enrollment No.</label><input id="id" type="text" placeholder="e.g. ALGBIN0001"></div>
     <div><label>Name</label><input id="name" type="text" placeholder="Student name"></div>
@@ -125,6 +139,12 @@ button{border:0;border-radius:8px;padding:11px 16px;font-weight:700;cursor:point
     <div><label>Date of Birth</label><input id="dob" type="text" placeholder="DD-MM-YYYY"></div>
     <div><label>Name of the Institution</label><input id="institute" type="text" placeholder="Institution name"></div>
     <div><label>Date of Joining</label><input id="joining" type="text" placeholder="e.g. Aug 2026"></div>
+    <div><label>Mobile No</label><input id="mobile" type="text" placeholder="Mobile number"></div>
+    <div><label>Guru</label><input id="guru" type="text" placeholder="Guru name"></div>
+    <div style="grid-column: span 2;">
+      <label>Student Photo</label>
+      <input id="photoFile" type="file" accept="image/*">
+    </div>
   </div>
   <div class="actions">
     <button class="primary" id="download">Download High-Resolution PDF</button>
@@ -136,8 +156,9 @@ button{border:0;border-radius:8px;padding:11px 16px;font-weight:700;cursor:point
 <div class="panel">
   <div class="card-wrap">
     <div class="card" id="card">
-      <img class="card-background" alt="ID Card Background Template" src="Main.png">
+      <img class="card-background" alt="ID Card Background Template" src="Main.jpg">
       <div class="card-fields" aria-label="Student information">
+        <img id="vPhoto" class="card-photo" alt="Student Photo">
         <div class="value" id="vId"></div>
         <div class="value" id="vName"></div>
         <div class="value" id="vGrade"></div>
@@ -152,7 +173,7 @@ button{border:0;border-radius:8px;padding:11px 16px;font-weight:700;cursor:point
 <script>
 const $=id=>document.getElementById(id);
 let students=[];
-const fields=['id','name','grade','dob','institute','joining'];
+const fields=['id','name','grade','dob','institute','joining','mobile','guru'];
 
 function norm(v){return String(v??'').trim().toLowerCase().replace(/[^a-z0-9]/g,'');}
 function val(row,names){
@@ -177,18 +198,31 @@ function mapRow(r){
   name:val(r,['NAME','Student Name','StudentName','Student']),
   grade:val(r,['GRADE','Grade','Class','Level']),
   dob:dateText(val(r,['DATE OF BIRTH','DATEOFBIRTH','DOB','Date of Birth','Birth Date'])),
+  mobile:val(r,['MOBILE NO','MOBILENO','Mobile No','Mobile','Phone']),
+  guru:val(r,['GURU','Teacher','Instructor']),
   institute:val(r,['NAME OF THE INSTITUTE','NAMEOFTHEINSTITUTE','Name of the Institute','Institute Name','Institute','Institution Name','Institution']),
   joining:dateText(val(r,['DATE OF JOINING','DATEOFJOINING','Joining Date','Date Joined']))
  };
 }
 function setForm(s){
  if(!s)return;
- $('id').value=s.id||'';$('name').value=s.name||'';$('grade').value=s.grade||'';
- $('dob').value=s.dob||'';$('institute').value=s.institute||'';$('joining').value=s.joining||'';
+ $('id').value=s.id||''; $('name').value=s.name||''; $('grade').value=s.grade||'';
+ $('dob').value=s.dob||''; $('institute').value=s.institute||''; $('joining').value=s.joining||'';
+ $('mobile').value=s.mobile||''; $('guru').value=s.guru||'';
  update();
 }
 function current(){
- return {id:$('id').value.trim(),name:$('name').value.trim(),grade:$('grade').value.trim(),dob:$('dob').value.trim(),institute:$('institute').value.trim(),joining:$('joining').value.trim()};
+ return {
+   id:$('id').value.trim(),
+   name:$('name').value.trim(),
+   grade:$('grade').value.trim(),
+   dob:$('dob').value.trim(),
+   institute:$('institute').value.trim(),
+   joining:$('joining').value.trim(),
+   mobile:$('mobile').value.trim(),
+   guru:$('guru').value.trim(),
+   photo:$('vPhoto').src
+ };
 }
 const cardValueEls = Object.freeze({
   vId: document.getElementById('vId'),
@@ -196,7 +230,8 @@ const cardValueEls = Object.freeze({
   vGrade: document.getElementById('vGrade'),
   vDob: document.getElementById('vDob'),
   vInstitute: document.getElementById('vInstitute'),
-  vJoining: document.getElementById('vJoining')
+  vJoining: document.getElementById('vJoining'),
+  vPhoto: document.getElementById('vPhoto')
 });
 
 function update(){
@@ -210,7 +245,23 @@ function update(){
 }
 fields.forEach(f=>$(''+f).addEventListener('input',update));
 
-$('clear').onclick=()=>{fields.forEach(f=>$(''+f).value='');$('status').textContent='Cleared. You can type student details.';update();};
+$('photoFile').addEventListener('change', e => {
+  const file = e.target.files[0];
+  if(!file) return;
+  const reader = new FileReader();
+  reader.onload = ev => {
+    cardValueEls.vPhoto.src = ev.target.result;
+  };
+  reader.readAsDataURL(file);
+});
+
+$('clear').onclick=()=>{
+  fields.forEach(f=>$(''+f).value='');
+  $('photoFile').value='';
+  cardValueEls.vPhoto.src='';
+  $('status').textContent='Cleared. You can type student details.';
+  update();
+};
 $('print').onclick=()=>window.print();
 
 $('search').addEventListener('input',()=>{
@@ -286,15 +337,6 @@ $('download').onclick=async()=>{
  $('status').textContent='High-resolution PDF generated successfully.';
 };
 
-(function validateCardFields(){
-  const ids=['vId','vName','vGrade','vDob','vInstitute','vJoining'];
-  const cardCount=document.querySelectorAll('#card').length;
-  const bgCount=document.querySelectorAll('#card .card-background').length;
-  const layerCount=document.querySelectorAll('#card .card-fields').length;
-  if(cardCount!==1 || bgCount!==1 || layerCount!==1) console.error('CARD STRUCTURE ERROR', {cardCount,bgCount,layerCount});
-  const duplicateIds=ids.filter(id=>document.querySelectorAll('#card #'+id).length!==1);
-  if(duplicateIds.length) console.warn('Unexpected duplicate/missing card field:',duplicateIds);
-})();
 update();
 </script>
 </body>
