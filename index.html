@@ -40,7 +40,8 @@ button{border:0;border-radius:8px;padding:11px 16px;font-weight:700;cursor:point
   .value{font-size:12px}
   #vInstitute{font-size:10px}
 }
-@media print{body{background:#fff}.wrap>h1,.wrap>.sub,.wrap>.panel{display:none!important}.card-wrap{padding:0}.card{width:101.6mm;height:63.8mm}}
+@page{size:101.6mm 63.8mm;margin:0}
+@media print{html,body{width:101.6mm;height:63.8mm;margin:0!important;padding:0!important;background:#fff!important}body{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important}.wrap{width:101.6mm;height:63.8mm;margin:0!important;padding:0!important}.wrap>h1,.wrap>.sub,.wrap>.panel{display:none!important}.card-wrap{display:block;width:101.6mm;height:63.8mm;margin:0!important;padding:0!important;overflow:hidden}.card{width:101.6mm!important;height:63.8mm!important;max-width:none!important;margin:0!important;aspect-ratio:auto!important}}
 
 /* CLEAN CARD FIELDS
    The background artwork already contains the six labels and colons.
