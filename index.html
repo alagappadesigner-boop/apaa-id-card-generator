@@ -110,7 +110,7 @@ button{border:0;border-radius:8px;padding:11px 16px;font-weight:700;cursor:point
     <div>
       <label>Excel / CSV File</label>
       <input id="file" type="file" accept=".xlsx,.xls,.csv">
-      <div class="hint">Automatically detects ENROLLMENT NO, NAME, GRADE, DATE OF BIRTH, MOBILE NO, GURU, and NAME OF THE INSTITUTE.</div>
+      <div class="hint">The program automatically finds the row containing ENROLLMENT NO, NAME and GRADE.</div>
     </div>
     <div>
       <label>Search Student</label>
@@ -139,8 +139,6 @@ button{border:0;border-radius:8px;padding:11px 16px;font-weight:700;cursor:point
     <div><label>Date of Birth</label><input id="dob" type="text" placeholder="DD-MM-YYYY"></div>
     <div><label>Name of the Institution</label><input id="institute" type="text" placeholder="Institution name"></div>
     <div><label>Date of Joining</label><input id="joining" type="text" placeholder="e.g. Aug 2026"></div>
-    <div><label>Mobile No</label><input id="mobile" type="text" placeholder="Mobile number"></div>
-    <div><label>Guru</label><input id="guru" type="text" placeholder="Guru name"></div>
     <div style="grid-column: span 2;">
       <label>Student Photo</label>
       <input id="photoFile" type="file" accept="image/*">
@@ -173,7 +171,7 @@ button{border:0;border-radius:8px;padding:11px 16px;font-weight:700;cursor:point
 <script>
 const $=id=>document.getElementById(id);
 let students=[];
-const fields=['id','name','grade','dob','institute','joining','mobile','guru'];
+const fields=['id','name','grade','dob','institute','joining'];
 
 function norm(v){return String(v??'').trim().toLowerCase().replace(/[^a-z0-9]/g,'');}
 function val(row,names){
@@ -198,8 +196,6 @@ function mapRow(r){
   name:val(r,['NAME','Student Name','StudentName','Student']),
   grade:val(r,['GRADE','Grade','Class','Level']),
   dob:dateText(val(r,['DATE OF BIRTH','DATEOFBIRTH','DOB','Date of Birth','Birth Date'])),
-  mobile:val(r,['MOBILE NO','MOBILENO','Mobile No','Mobile','Phone']),
-  guru:val(r,['GURU','Teacher','Instructor']),
   institute:val(r,['NAME OF THE INSTITUTE','NAMEOFTHEINSTITUTE','Name of the Institute','Institute Name','Institute','Institution Name','Institution']),
   joining:dateText(val(r,['DATE OF JOINING','DATEOFJOINING','Joining Date','Date Joined']))
  };
@@ -208,7 +204,6 @@ function setForm(s){
  if(!s)return;
  $('id').value=s.id||''; $('name').value=s.name||''; $('grade').value=s.grade||'';
  $('dob').value=s.dob||''; $('institute').value=s.institute||''; $('joining').value=s.joining||'';
- $('mobile').value=s.mobile||''; $('guru').value=s.guru||'';
  update();
 }
 function current(){
@@ -219,8 +214,6 @@ function current(){
    dob:$('dob').value.trim(),
    institute:$('institute').value.trim(),
    joining:$('joining').value.trim(),
-   mobile:$('mobile').value.trim(),
-   guru:$('guru').value.trim(),
    photo:$('vPhoto').src
  };
 }
