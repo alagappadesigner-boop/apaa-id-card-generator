@@ -124,7 +124,7 @@ button{border:0;border-radius:8px;padding:11px 16px;font-weight:700;cursor:point
     <div><label>Grade</label><input id="grade" type="text" placeholder="e.g. Pre - Grade"></div>
     <div><label>Date of Birth</label><input id="dob" type="text" placeholder="DD-MM-YYYY"></div>
     <div><label>Name of the Institution</label><input id="institute" type="text" placeholder="Institution name"></div>
-    <div><label>Date of Joining</label><input id="joining" type="text" value="Aug 2026" placeholder="e.g. Aug 2026"></div>
+    <div><label>Date of Joining</label><input id="joining" type="text" placeholder="e.g. Aug 2026"></div>
   </div>
   <div class="actions">
     <button class="primary" id="download">Download High-Resolution PDF</button>
@@ -136,14 +136,14 @@ button{border:0;border-radius:8px;padding:11px 16px;font-weight:700;cursor:point
 <div class="panel">
   <div class="card-wrap">
     <div class="card" id="card">
-      <img class="card-background" alt="ID Card Background Template" src="Template">
+      <img class="card-background" alt="ID Card Background Template" src="Main.png">
       <div class="card-fields" aria-label="Student information">
-        <div class="value" id="vId">—</div>
-        <div class="value" id="vName">—</div>
-        <div class="value" id="vGrade">—</div>
-        <div class="value" id="vDob">—</div>
-        <div class="value" id="vInstitute">—</div>
-        <div class="value" id="vJoining">—</div>
+        <div class="value" id="vId"></div>
+        <div class="value" id="vName"></div>
+        <div class="value" id="vGrade"></div>
+        <div class="value" id="vDob"></div>
+        <div class="value" id="vInstitute"></div>
+        <div class="value" id="vJoining"></div>
       </div>
     </div>
   </div>
@@ -178,17 +178,17 @@ function mapRow(r){
   grade:val(r,['GRADE','Grade','Class','Level']),
   dob:dateText(val(r,['DATE OF BIRTH','DATEOFBIRTH','DOB','Date of Birth','Birth Date'])),
   institute:val(r,['NAME OF THE INSTITUTE','NAMEOFTHEINSTITUTE','Name of the Institute','Institute Name','Institute','Institution Name','Institution']),
-  joining:dateText(val(r,['DATE OF JOINING','DATEOFJOINING','Joining Date','Date Joined'])) || 'Aug 2026'
+  joining:dateText(val(r,['DATE OF JOINING','DATEOFJOINING','Joining Date','Date Joined']))
  };
 }
 function setForm(s){
  if(!s)return;
  $('id').value=s.id||'';$('name').value=s.name||'';$('grade').value=s.grade||'';
- $('dob').value=s.dob||'';$('institute').value=s.institute||'';$('joining').value=s.joining||'Aug 2026';
+ $('dob').value=s.dob||'';$('institute').value=s.institute||'';$('joining').value=s.joining||'';
  update();
 }
 function current(){
- return {id:$('id').value.trim(),name:$('name').value.trim(),grade:$('grade').value.trim(),dob:$('dob').value.trim(),institute:$('institute').value.trim(),joining:$('joining').value.trim() || 'Aug 2026'};
+ return {id:$('id').value.trim(),name:$('name').value.trim(),grade:$('grade').value.trim(),dob:$('dob').value.trim(),institute:$('institute').value.trim(),joining:$('joining').value.trim()};
 }
 const cardValueEls = Object.freeze({
   vId: document.getElementById('vId'),
@@ -201,16 +201,16 @@ const cardValueEls = Object.freeze({
 
 function update(){
   const s=current();
-  cardValueEls.vId.textContent=s.id||'—';
-  cardValueEls.vName.textContent=s.name||'—';
-  cardValueEls.vGrade.textContent=s.grade||'—';
-  cardValueEls.vDob.textContent=s.dob||'—';
-  cardValueEls.vInstitute.textContent=s.institute||'—';
-  cardValueEls.vJoining.textContent=s.joining||'—';
+  cardValueEls.vId.textContent=s.id;
+  cardValueEls.vName.textContent=s.name;
+  cardValueEls.vGrade.textContent=s.grade;
+  cardValueEls.vDob.textContent=s.dob;
+  cardValueEls.vInstitute.textContent=s.institute;
+  cardValueEls.vJoining.textContent=s.joining;
 }
 fields.forEach(f=>$(''+f).addEventListener('input',update));
 
-$('clear').onclick=()=>{fields.forEach(f=>$(''+f).value='');$('joining').value='Aug 2026';$('status').textContent='Cleared. You can type student details.';update();};
+$('clear').onclick=()=>{fields.forEach(f=>$(''+f).value='');$('status').textContent='Cleared. You can type student details.';update();};
 $('print').onclick=()=>window.print();
 
 $('search').addEventListener('input',()=>{
