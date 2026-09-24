@@ -29,7 +29,6 @@ button{border:0;border-radius:8px;padding:11px 16px;font-weight:700;cursor:point
 .card{position:relative;display:block;width:min(1024px,100%);max-width:100%;aspect-ratio:2048/1294;overflow:hidden;isolation:isolate;contain:paint;background:#fffdf6;flex:none}
 .value{position:absolute;color:#062d5c;font-family:"Trebuchet MS",Arial,sans-serif;font-size:22px;font-weight:700;line-height:1.05;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 
-/* Prevent accidental pseudo-elements or inherited generated content */
 .card::before,.card::after{content:none !important;display:none !important}
 .card .value::before,.card .value::after{content:none !important;display:none !important}
 
@@ -42,7 +41,6 @@ button{border:0;border-radius:8px;padding:11px 16px;font-weight:700;cursor:point
 }
 @media print{body{background:#fff}.wrap>h1,.wrap>.sub,.wrap>.panel{display:none!important}.card-wrap{padding:0}.card{width:101.6mm;height:63.8mm}}
 
-/* CLEAN CARD FIELDS */
 .card .value{
   position:absolute !important;
   left:45.65% !important;
@@ -84,7 +82,6 @@ button{border:0;border-radius:8px;padding:11px 16px;font-weight:700;cursor:point
   #vInstitute{font-size:10px !important}
 }
 
-/* ANTI-GHOSTING FIX */
 .card{position:relative !important;overflow:hidden !important;isolation:isolate !important;background:#fffdf6 !important;}
 .card-background{position:absolute !important;inset:0 !important;width:100% !important;height:100% !important;display:block !important;margin:0 !important;padding:0 !important;border:0 !important;z-index:0 !important;pointer-events:none !important;user-select:none !important;}
 .card-fields{position:absolute !important;inset:0 !important;width:100% !important;height:100% !important;margin:0 !important;padding:0 !important;border:0 !important;z-index:2 !important;pointer-events:none !important;}
@@ -142,7 +139,8 @@ button{border:0;border-radius:8px;padding:11px 16px;font-weight:700;cursor:point
 <div class="panel">
   <div class="card-wrap">
     <div class="card" id="card">
-      <img class="card-background" alt="ID Card Background Template" src="data:image/png;base64,..." />
+      <!-- Make sure your image file is named background.png and placed in the same folder -->
+      <img class="card-background" alt="ID Card Background Template" src="background.png">
       <div class="card-fields" aria-label="Student information">
         <div class="value" id="vId">—</div>
         <div class="value" id="vName">—</div>
@@ -265,7 +263,7 @@ $('download').onclick=async()=>{
 
  const card=$('card');
  const renderScale=6;
- const canvas=await html2canvas(card,{
+ const canvas=defaultCanvas = await html2canvas(card,{
   scale:renderScale,
   useCORS:true,
   allowTaint:false,
