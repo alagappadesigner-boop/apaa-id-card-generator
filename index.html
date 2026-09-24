@@ -29,51 +29,50 @@ button{border:0;border-radius:8px;padding:11px 16px;font-weight:700;cursor:point
 .card{position:relative;display:block;width:min(1024px,100%);max-width:100%;aspect-ratio:2048/1294;overflow:hidden;isolation:isolate;contain:paint;background:#fffdf6;flex:none}
 
 .card::before,.card::after{content:none !important;display:none !important}
+.card .value::before,.card .value::after{content:none !important;display:none !important}
 
 @media(max-width:750px){
   .grid{grid-template-columns:1fr}
-  .card-row{font-size:11px !important}
-  #rowInstitute .value{font-size:10px !important}
+  .value{font-size:12px}
+  #vInstitute{font-size:10px}
 }
 @media print{body{background:#fff}.wrap>h1,.wrap>.sub,.wrap>.panel{display:none!important}.card-wrap{padding:0}.card{width:101.6mm;height:63.8mm}}
 
-/* Card Row & Column Layout */
-.card-row{
+.card .value{
   position:absolute !important;
-  left:41% !important;
-  width:56% !important;
-  display:flex !important;
-  align-items:center !important;
+  left:42% !important;
+  width:55% !important;
+  max-width:55% !important;
   color:#062d5c !important;
   font-family:"Trebuchet MS",Arial,sans-serif !important;
-  font-size:16px !important;
+  font-size:18px !important;
   font-weight:700 !important;
   line-height:1 !important;
-  z-index:3 !important;
-}
-.card-row .label{
-  width:42% !important;
-  flex-shrink:0 !important;
-  white-space:nowrap !important;
-}
-.card-row .colon{
-  width:5% !important;
-  text-align:center !important;
-}
-.card-row .value{
-  width:53% !important;
+  letter-spacing:0 !important;
+  text-align:left !important;
   white-space:nowrap !important;
   overflow:hidden !important;
   text-overflow:ellipsis !important;
+  padding:0 !important;
+  margin:0 !important;
+  border:0 !important;
+  background:transparent !important;
+  text-shadow:none !important;
+  box-shadow:none !important;
+  z-index:3 !important;
+  transform:none !important;
+  filter:none !important;
+  opacity:1 !important;
+  backface-visibility:hidden !important;
+  -webkit-font-smoothing:antialiased !important;
+  contain:layout paint !important;
 }
-
-#rowId{top:28.0% !important}
-#rowName{top:35.5% !important}
-#rowGrade{top:43.0% !important}
-#rowDob{top:50.5% !important}
-#rowInstitute{top:58.0% !important}
-#rowInstitute .value{font-size:14px !important}
-#rowJoining{top:65.5% !important}
+#vId{top:28.0% !important}
+#vName{top:35.5% !important}
+#vGrade{top:43.0% !important}
+#vDob{top:50.5% !important}
+#vInstitute{top:58.0% !important;font-size:15px !important}
+#vJoining{top:65.5% !important}
 
 /* Student Photo Styling */
 .card-photo {
@@ -89,9 +88,16 @@ button{border:0;border-radius:8px;padding:11px 16px;font-weight:700;cursor:point
   z-index: 3 !important;
 }
 
+@media(max-width:750px){
+  .card .value{font-size:12px !important}
+  #vInstitute{font-size:10px !important}
+}
+
 .card{position:relative !important;overflow:hidden !important;isolation:isolate !important;background:#fffdf6 !important;}
 .card-background{position:absolute !important;inset:0 !important;width:100% !important;height:100% !important;display:block !important;margin:0 !important;padding:0 !important;border:0 !important;z-index:0 !important;pointer-events:none !important;user-select:none !important;}
 .card-fields{position:absolute !important;inset:0 !important;width:100% !important;height:100% !important;margin:0 !important;padding:0 !important;border:0 !important;z-index:2 !important;pointer-events:none !important;}
+.card-fields .value{display:block !important;position:absolute !important;transform:none !important;animation:none !important;transition:none !important;will-change:auto !important;}
+.card-fields::before,.card-fields::after,.card-fields .value::before,.card-fields .value::after{content:none !important;display:none !important;}
 </style>
 </head>
 <body>
@@ -153,25 +159,12 @@ button{border:0;border-radius:8px;padding:11px 16px;font-weight:700;cursor:point
       <img class="card-background" alt="ID Card Background Template" src="Main.jpg">
       <div class="card-fields" aria-label="Student information">
         <img id="vPhoto" class="card-photo" alt="Student Photo">
-        
-        <div class="card-row" id="rowId">
-          <span class="label">Student ID</span><span class="colon">:</span><span class="value" id="vId"></span>
-        </div>
-        <div class="card-row" id="rowName">
-          <span class="label">Name</span><span class="colon">:</span><span class="value" id="vName"></span>
-        </div>
-        <div class="card-row" id="rowGrade">
-          <span class="label">Grade</span><span class="colon">:</span><span class="value" id="vGrade"></span>
-        </div>
-        <div class="card-row" id="rowDob">
-          <span class="label">Date of Birth</span><span class="colon">:</span><span class="value" id="vDob"></span>
-        </div>
-        <div class="card-row" id="rowInstitute">
-          <span class="label">Institution</span><span class="colon">:</span><span class="value" id="vInstitute"></span>
-        </div>
-        <div class="card-row" id="rowJoining">
-          <span class="label">Date of Joining</span><span class="colon">:</span><span class="value" id="vJoining"></span>
-        </div>
+        <div class="value" id="vId"></div>
+        <div class="value" id="vName"></div>
+        <div class="value" id="vGrade"></div>
+        <div class="value" id="vDob"></div>
+        <div class="value" id="vInstitute"></div>
+        <div class="value" id="vJoining"></div>
       </div>
     </div>
   </div>
