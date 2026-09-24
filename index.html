@@ -27,15 +27,12 @@ button{border:0;border-radius:8px;padding:11px 16px;font-weight:700;cursor:point
 .hint{font-size:12px;color:#667085;margin-top:6px}
 .card-wrap{display:flex;justify-content:center;align-items:flex-start;width:100%;overflow:hidden;padding:4px}
 .card{position:relative;display:block;width:min(1024px,100%);max-width:100%;aspect-ratio:2048/1294;overflow:hidden;isolation:isolate;contain:paint;background:#fffdf6;flex:none}
-.value{position:absolute;color:#062d5c;font-family:"Trebuchet MS",Arial,sans-serif;font-size:22px;font-weight:700;line-height:1.05;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 
 .card::before,.card::after{content:none !important;display:none !important}
 .card .value::before,.card .value::after{content:none !important;display:none !important}
 
 @media(max-width:750px){
   .grid{grid-template-columns:1fr}
-  .field-label{font-size:12px}
-  .field-colon{font-size:12px}
   .value{font-size:12px}
   #vInstitute{font-size:10px}
 }
@@ -43,9 +40,9 @@ button{border:0;border-radius:8px;padding:11px 16px;font-weight:700;cursor:point
 
 .card .value{
   position:absolute !important;
-  left:45.65% !important;
-  width:48% !important;
-  max-width:48% !important;
+  left:46.5% !important;
+  width:50% !important;
+  max-width:50% !important;
   color:#062d5c !important;
   font-family:"Trebuchet MS",Arial,sans-serif !important;
   font-size:20px !important;
@@ -70,12 +67,12 @@ button{border:0;border-radius:8px;padding:11px 16px;font-weight:700;cursor:point
   -webkit-font-smoothing:antialiased !important;
   contain:layout paint !important;
 }
-#vId{top:46.45% !important}
-#vName{top:51.90% !important}
-#vGrade{top:57.35% !important}
-#vDob{top:62.80% !important}
-#vInstitute{top:68.25% !important;font-size:17px !important}
-#vJoining{top:73.70% !important}
+#vId{top:16.5% !important}
+#vName{top:25.0% !important}
+#vGrade{top:33.5% !important}
+#vDob{top:42.0% !important}
+#vInstitute{top:50.5% !important;font-size:16px !important}
+#vJoining{top:59.0% !important}
 
 @media(max-width:750px){
   .card .value{font-size:12px !important}
