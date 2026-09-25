@@ -172,14 +172,15 @@ function dateText(v){
 
 function mapRow(r){
   const getVal = (...keys) => {
+    const keysObj = Object.keys(r);
     for (const key of keys) {
-      const foundKey = Object.keys(r).find(k => k && norm(k) === norm(key));
+      const foundKey = keysObj.find(k => k && norm(k) === norm(key));
       if (foundKey !== undefined && r[foundKey] !== undefined && String(r[foundKey]).trim() !== '') {
         return r[foundKey];
       }
     }
     for (const key of keys) {
-      const foundKey = Object.keys(r).find(k => k && norm(k).includes(norm(key)));
+      const foundKey = keysObj.find(k => k && norm(k).includes(norm(key)));
       if (foundKey !== undefined && r[foundKey] !== undefined && String(r[foundKey]).trim() !== '') {
         return r[foundKey];
       }
@@ -255,18 +256,23 @@ $('search').addEventListener('input',()=>{
    return;
  }
  list.forEach((s,i)=>{
-   const o=document.createElement('option');
-   o.value=i;
+   const o=document.exitFullscreen ? document.createElement('option') : document.createElement('option');
+   // Find original index in students array
+   const origIdx = students.indexOf(s);
+   o.value = origIdx;
    o.textContent=(s.id||'No ID')+' — '+(s.name||'Unnamed');
    sel.appendChild(o);
  });
  sel._list=list;
- if(list.length) setForm(list[0]);
+ if(list.length) {
+   setForm(list[0]);
+   sel.value = students.indexOf(list[0]);
+ }
 });
 
 $('studentSelect').addEventListener('change',()=>{
-  const list=$('studentSelect')._list || students;
-  const s=list[Number($('studentSelect').value)];
+  const idx = Number($('studentSelect').value);
+  const s = students[idx];
   if(s) setForm(s);
 });
 
@@ -291,14 +297,9 @@ $('file').addEventListener('change',e=>{
      throw new Error('The Excel sheet is empty.');
    }
    
-   // Strictly target Row 5 (index 4) where the actual table headers are located, ignoring title rows
-   let hi = matrix.findIndex((r, idx) => {
-     if (idx < 2) return false;
-     const hStr = r.map(norm).join(' ');
-     return hStr.includes('enrollment') && hStr.includes('name');
-   });
-   if (hi < 0) hi = 4; // Fallback to index 4 (Row 5)
-
+   // Force row index 4 (Row 5 in Excel) where headers are located
+   let hi = 4;
+   
    const rows=XLSX.utils.sheet_to_json(ws,{defval:'',raw:true,range:hi});
    students=rows.map(mapRow).filter(s=>s.id||s.name);
    
