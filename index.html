@@ -98,7 +98,7 @@ button{border:0;border-radius:8px;padding:11px 16px;font-weight:700;cursor:point
 <div class="panel">
   <div class="grid">
     <div>
-      <label>Excel / CSV File</label>
+      <label>Excel / CSV File (Import Excel)</label>
       <input id="file" type="file" accept=".xlsx,.xls,.csv">
       <div class="hint">Upload your Excel or CSV file. Columns are detected automatically.</div>
     </div>
@@ -255,9 +255,8 @@ $('search').addEventListener('input',()=>{
    sel.innerHTML='<option value="">No matching student</option>';
    return;
  }
- list.forEach((s,i)=>{
-   const o=document.exitFullscreen ? document.createElement('option') : document.createElement('option');
-   // Find original index in students array
+ list.forEach((s)=>{
+   const o=document.createElement('option');
    const origIdx = students.indexOf(s);
    o.value = origIdx;
    o.textContent=(s.id||'No ID')+' — '+(s.name||'Unnamed');
