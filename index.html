@@ -7,6 +7,7 @@
 <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
 <style>
 *{box-sizing:border-box}
 body{margin:0;background:#eef1f5;font-family:Arial,Helvetica,sans-serif;color:#102f59}
@@ -131,6 +132,7 @@ button{border:0;border-radius:8px;padding:11px 16px;font-weight:700;cursor:point
   </div>
   <div class="actions">
     <button class="primary" id="download">Download High-Resolution PDF</button>
+    <button class="primary" id="downloadZip" style="background:#0d5c2d;">Download All as ZIP</button>
     <button class="secondary" id="print">Print / Save as PDF</button>
     <button class="secondary" id="clear">Clear</button>
   </div>
@@ -139,7 +141,7 @@ button{border:0;border-radius:8px;padding:11px 16px;font-weight:700;cursor:point
 <div class="panel">
   <div class="card-wrap">
     <div class="card" id="card">
-      <img class="card-background" alt="Blue Modern Student ID Card (1).png"src="Blue Modern Student ID Card.png">
+      <img class="card-background" alt="Card Background" src="22.png">
       <div class="card-fields" aria-label="Student information">
         <div class="value" id="vId">—</div>
         <div class="value" id="vName">—</div>
@@ -186,8 +188,7 @@ function mapRow(r){
 }
 function setForm(s){
  if(!s)return;
- $('id').value=s.id||'';$('name').value=s.name||'';$('grade').value=s.grade||'';
- $('dob').value=s.dob||'';$('institute').value=s.institute||'';$('joining').value=s.joining||'Aug 2026';
+ $('id').value=s.id\vert{}\vert{}'';$('name').value=s.name||'';$('grade').value=s.grade\vert{}\vert{}'';$('dob').value=s.dob||'';$('institute').value=s.institute\vert{}\vert{}'';$('joining').value=s.joining||'Aug 2026';
  update();
 }
 function current(){
@@ -225,7 +226,7 @@ $('search').addEventListener('input',()=>{
  sel._list=list;
  if(list.length) setForm(list[0]);
 });
-$('studentSelect').addEventListener('change',()=>{const list=$('studentSelect')._list||[];const s=list[Number($('studentSelect').value)];if(s)setForm(s);});
+$('studentSelect').addEventListener('change',()=>{const list=$('studentSelect')._list\vert{}\vert{}[];const s=list[Number($('studentSelect').value)];if(s)setForm(s);});
 
 $('file').addEventListener('change',e=>{
  const file=e.target.files[0]; if(!file)return;
@@ -289,15 +290,54 @@ $('download').onclick=async()=>{
  $('status').textContent='High-resolution PDF generated successfully.';
 };
 
-(function validateCardFields(){
-  const ids=['vId','vName','vGrade','vDob','vInstitute','vJoining'];
-  const cardCount=document.querySelectorAll('#card').length;
-  const bgCount=document.querySelectorAll('#card .card-background').length;
-  const layerCount=document.querySelectorAll('#card .card-fields').length;
-  if(cardCount!==1 || bgCount!==1 || layerCount!==1) console.error('CARD STRUCTURE ERROR', {cardCount,bgCount,layerCount});
-  const duplicateIds=ids.filter(id=>document.querySelectorAll('#card #'+id).length!==1);
-  if(duplicateIds.length) console.warn('Unexpected duplicate/missing card field:',duplicateIds);
-})();
+$('downloadZip').onclick=async()=>{
+ if(!students.length){alert('Please upload an Excel file with students first.');return;}
+ if(!window.JSZip||!window.jspdf||!window.html2canvas){alert('Required libraries are missing.');return;}
+
+ const zip=new JSZip();
+ const card=$('card');
+ const renderScale=4; // optimized for batch speed
+ $('status').textContent=`Preparing ZIP archive for ${students.length} students...`;
+
+ for(let i=0; i<students.length; i++){
+  const s=students[i];
+  setForm(s);
+  $('status').textContent=`Processing student ${i+1} of ${students.length}: ${s.name||s.id}`;
+  
+  // Wait a split moment for DOM update
+  await new Promise(r=>setTimeout(r, 50));
+
+  const canvas=await html2canvas(card,{
+   scale:renderScale,
+   useCORS:true,
+   allowTaint:false,
+   backgroundColor:'#fffdf6',
+   logging:false,
+   imageTimeout:0
+  });
+
+  const doc=new jspdf.jsPDF({
+   orientation:'landscape',
+   unit:'mm',
+   format:[101.6,63.8],
+   compress:true
+  });
+  doc.addImage(canvas.toDataURL('image/png'),'PNG',0,0,101.6,63.8,undefined,'FAST');
+  
+  const pdfBlob=doc.output('blob');
+  const filename=(s.name||s.id||('Student_'+i)).replace(/[^a-z0-9_-]+/gi,'_');
+  zip.file(`StudentID_${filename}.pdf`, pdfBlob);
+ }
+
+ $('status').textContent='Compressing ZIP archive...';
+ const content=await zip.generateAsync({type:'blob'});
+ const link=document.createElement('a');
+ link.href=URL.createObjectURL(content);
+ link.download='All_Student_ID_Cards.zip';
+ link.click();
+ $('status').textContent=`Successfully generated ZIP containing ${students.length} ID cards.`;
+};
+
 update();
 </script>
 </body>
