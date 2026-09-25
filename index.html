@@ -100,7 +100,7 @@ button{border:0;border-radius:8px;padding:11px 16px;font-weight:700;cursor:point
     <div>
       <label>Excel / CSV File</label>
       <input id="file" type="file" accept=".xlsx,.xls,.csv">
-      <div class="hint">The program automatically finds columns containing student ID, name, and grade.</div>
+      <div class="hint">Upload your Excel or CSV file. Columns are detected automatically.</div>
     </div>
     <div>
       <label>Search Student</label>
@@ -181,11 +181,11 @@ function dateText(v){
 
 function mapRow(r){
  return {
-  id:val(r,['enrollment','studentid','studentno','id','regno']),
-  name:val(r,['studentname','fullname','name']),
+  id:val(r,['enrollment','studentid','studentno','id','regno','roll']),
+  name:val(r,['studentname','fullname','name','student']),
   grade:val(r,['grade','class','level']),
   dob:dateText(val(r,['dob','dateofbirth','birthdate'])),
-  institute:val(r,['institute','institution','school','academy','center']),
+  institute:val(r,['institute','institution','school','academy','center','nameoftheinstitute']),
   joining:dateText(val(r,['joining','joined','datejoined'])) || 'Aug 2026'
  };
 }
@@ -280,14 +280,17 @@ $('file').addEventListener('change',e=>{
    const ws=wb.Sheets[wb.SheetNames[0]];
    const matrix=XLSX.utils.sheet_to_json(ws,{header:1,defval:'',raw:true});
    
-   // Flexible header row finder
-   const hi=matrix.findIndex(r=>{
-     const hStr=r.map(norm).join(' ');
-     return (hStr.includes('name') || hStr.includes('student')) && (hStr.includes('grade') || hStr.includes('id') || hStr.includes('enrollment'));
-   });
-
-   if(hi<0) throw new Error('Header row not found');
+   if(!matrix.length){
+     throw new Error('The Excel sheet is empty.');
+   }
    
+   // Flexible header row finder, with fallback to row 0
+   let hi=matrix.findIndex(r=>{
+     const hStr=r.map(norm).join(' ');
+     return hStr.includes('name') || hStr.includes('student') || hStr.includes('grade') || hStr.includes('id');
+   });
+   if(hi<0) hi = 0; // Fallback to first row if headers aren't explicitly recognized
+
    const rows=XLSX.utils.sheet_to_json(ws,{defval:'',raw:true,range:hi});
    students=rows.map(mapRow).filter(s=>s.id||s.name);
    
@@ -295,7 +298,7 @@ $('file').addEventListener('change',e=>{
    sel.innerHTML='';
    
    if(!students.length){
-     $('status').textContent='Found header, but no student rows found.';
+     $('status').textContent='Parsed file, but no student records were found. Check column headers.';
      return;
    }
 
@@ -309,10 +312,10 @@ $('file').addEventListener('change',e=>{
    sel._list=students;
    sel.value=0;
    setForm(students[0]);
-   $('status').textContent='Successfully loaded '+students.length+' student(s) from '+file.name;
+   $('status').textContent=`Successfully loaded ${students.length} student(s) from ${file.name}!`;
   }catch(err){
    console.error(err);
-   $('status').textContent='Could not read file structure. Please ensure columns include Name and Grade/ID.';
+   $('status').textContent='Error reading file: ' + err.message;
   }
  };
  reader.readAsArrayBuffer(file);
