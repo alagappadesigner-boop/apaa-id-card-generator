@@ -284,12 +284,16 @@ $('file').addEventListener('change',e=>{
      throw new Error('The Excel sheet is empty.');
    }
    
-   // Flexible header row finder, with fallback to row 0
+   // Smart header finder: requires BOTH an ID/Enrollment keyword and a Name keyword to avoid title rows
    let hi=matrix.findIndex(r=>{
      const hStr=r.map(norm).join(' ');
-     return hStr.includes('name') || hStr.includes('student') || hStr.includes('grade') || hStr.includes('id');
+     const hasId = hStr.includes('enrollment') || hStr.includes('id') || hStr.includes('regno');
+     const hasName = hStr.includes('name') || hStr.includes('student');
+     const hasGrade = hStr.includes('grade');
+     return (hasId && hasName) || (hasId && hasGrade) || (hasName && hasGrade);
    });
-   if(hi<0) hi = 0; // Fallback to first row if headers aren't explicitly recognized
+   
+   if(hi<0) hi=4; // Default to row 5 (index 4) if explicit match fails
 
    const rows=XLSX.utils.sheet_to_json(ws,{defval:'',raw:true,range:hi});
    students=rows.map(mapRow).filter(s=>s.id||s.name);
